@@ -10,12 +10,7 @@ The illustration above shows a time‑unrolled representation of the RNN to make
 $$
 \begin{align}
 A (-, h)= X (-, i) @ W_x (i, h) + H_{t-1} (-, h) @  W_h (h, h) +  B_a (-, h) \quad (1)\\
-\end{align}
-$$
-
-$$
-\begin{aligned}
-H_t (-, h) = tanh(A) \\
+H_t (-, h) = tanh(A) \quad (2)\\
 \end{aligned}
 $$
 
