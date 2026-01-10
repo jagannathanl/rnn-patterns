@@ -7,9 +7,9 @@
 
 The illustration above shows a time‑unrolled representation of the RNN to make the computation steps easier to follow. Inputs enter the RNN cell from the bottom, and at each time step the cell produces an output. Uppercase variables with subscripts represent tensors, and the dimensions shown in parentheses indicate the shape of each corresponding parameter.
 $$
-\begin{aligned}
+\begin{align}
 A (-, h)= X (-, i) @ W_x (i, h) + H_{t-1} (-, h) @  W_h (h, h) +  B_a (-, h) \tag{1} \\
-\end{aligned}
+\end{align}
 $$
 
 $$
