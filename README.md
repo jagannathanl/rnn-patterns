@@ -15,13 +15,13 @@ $$
 
 $$
 \begin{aligned}
-H_t (-, h) = tanh(A) \tag{2}\\
+H_t (-, h) = tanh(A) \\
 \end{aligned}
 $$
 
 $$
 \begin{aligned}
-\hat{y} (-, o) = H_t (-, h) @ W_y (h, o) + B_y (-, o) \tag{3}\\
+\hat{y} (-, o) = H_t (-, h) @ W_y (h, o) + B_y (-, o) \\
 \end{aligned}
 $$
 
