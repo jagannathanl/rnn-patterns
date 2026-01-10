@@ -28,7 +28,7 @@ $$
 ![Figure 2](./rnn-gate.jpg)
 ### Figure 2
 
-This diagram above illustrates the internal flow within the RNN cell. The quantities $A$, $H_t$, $\hat{y}$ correspond to the operators defined in the equations above. The gradients are computed as follows. Let $L$ be the loss, $\nabla L = |\hat{y} -y|^2$, then $$\nabla L$$ can be written as follows:
+This diagram above illustrates the internal flow within the RNN cell. The quantities $A$, $H_t$, $\hat{y}$ correspond to the operators defined in the equations above. The gradients are computed as follows. Let $L$ be the loss, $\nabla L = |\hat{y} -y|^2$, then $\nabla L$ can be written as follows:
 
 $$ 
 \begin{aligned}
@@ -47,13 +47,12 @@ $$
 From equation $(2)$, 
 
 $$
-
 \begin{aligned}
 \frac{\partial H_t}{\partial A} = (1 - H_t^2) \\
 \nabla A = \frac{\partial L}{\partial H_t} \cdot \frac{\partial H_t}{\partial A}= \nabla H_t \cdot (1-Ht^2) \\
-
 \end{aligned}
 $$
+
 Similarly, we write $\nabla B_y$, $\nabla W_x$, $\nabla W_h$,  and $\nabla B_a$ as follows:
 $$
 \begin{aligned}
