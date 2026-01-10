@@ -9,7 +9,7 @@ The illustration above shows a time‑unrolled representation of the RNN to make
 
 $$
 \begin{align}
-A (-, h)= X (-, i) @ W_x (i, h) + H_{t-1} (-, h) @  W_h (h, h) +  B_a (-, h) \\
+A (-, h)= X (-, i) @ W_x (i, h) + H_{t-1} (-, h) @  W_h (h, h) +  B_a (-, h) \quad (1)\\
 \end{align}
 $$
 
@@ -66,7 +66,7 @@ $$
 
 The above equations can be written in the tensor form as follows:
 
-<div align="left">
+$$
 \begin{aligned}
 \nabla H_{total} (-, h) = \nabla H_t[i] (-, h) + \nabla H_t^y[i] (-, h) \\
 \nabla A (-. h) = \nabla H_{total} (-, h) \odot (1 - H_t[i]^2) (-, h) \\
@@ -78,6 +78,6 @@ The above equations can be written in the tensor form as follows:
 \nabla B_a (-, h) \mathrel{+}= \nabla_y A(-, h) \\
 \nabla H_t^y[i] (-, h) = \nabla_y A(-, h) \cdot W_h (h, h)\\
 \end{aligned}
-<\div>
+$$
 
 ## Code Organization
