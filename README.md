@@ -54,6 +54,7 @@ $$
 $$
 
 Similarly, we write $\nabla B_y$, $\nabla W_x$, $\nabla W_h$,  and $\nabla B_a$ as follows:
+
 $$
 \begin{aligned}
 \nabla B_y = \frac{\partial L}{\partial \hat{y}} \cdot \frac{\partial \hat{y}}{\partial B_y}= \nabla H_t \cdot 1 \\
@@ -62,7 +63,9 @@ $$
 \nabla B_a = \frac{\partial L}{\partial A} \cdot \frac{\partial A}{\partial B_a} = \nabla A \cdot 1 \\
 \end{aligned}
 $$
+
 The above equations can be written in the tensor form as follows:
+
 $$
 \begin{aligned}
 \nabla H_{total} (-, h) = \nabla H_t[i] (-, h) + \nabla H_t^y[i] (-, h) \\
@@ -74,7 +77,6 @@ $$
 \nabla W_h (h, h) \mathrel{+}= \nabla A.T (h, -) \cdot \nabla H_t[i] (-, h) \\
 \nabla B_a (-, h) \mathrel{+}= \nabla_y A(-, h) \\
 \nabla H_t^y[i] (-, h) = \nabla_y A(-, h) \cdot W_h (h, h)\\
-
 \end{aligned}
 $$
 
