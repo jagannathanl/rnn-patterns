@@ -11,11 +11,13 @@ $$
 A (-, h)= X (-, i) @ W_x (i, h) + H_{t-1} (-, h) @  W_h (h, h) +  B_a (-, h) \tag{1} \\
 \end{aligned}
 $$
+
 $$
 \begin{aligned}
 H_t (-, h) = tanh(A) \tag{2}\\
 \end{aligned}
 $$
+
 $$
 \begin{aligned}
 \hat{y} (-, o) = H_t (-, h) @ W_y (h, o) + B_y (-, o) \tag{3}\\
@@ -31,6 +33,7 @@ $$
 \nabla \hat{y} = \frac{\partial L}{\partial \hat{y}} = 2 \cdot |\hat{y} - y|
 \end{aligned}
 $$
+
 Similarly, we write $\nabla H_t$, and $\nabla A$ using the chain rule as follows:
 
 $$ 
