@@ -11,7 +11,7 @@ $$
 \begin{aligned}
 A (-, h)= X (-, i) @ W_x (i, h) + H_{t-1} (-, h) @  W_h (h, h) +  B_a (-, h) \quad (1)\\
 H_t (-, h) = tanh(A) \quad (2)\\
-\hat{y} (-, o) = H_t (-, h) @ W_y (h, o) + B_y (-, o)  \quad (3)\\
+\hat{y} (-, o) = H_t (-, h) @ W_y (h, o) + B_y (-, o)  \quad (3)
 \end{aligned}
 $$
 
