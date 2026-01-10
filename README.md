@@ -29,6 +29,7 @@ $$
 ### Figure 2
 
 This diagram above illustrates the internal flow within the RNN cell. The quantities $A$, $H_t$, $\hat{y}$ correspond to the operators defined in the equations above. The gradients are computed as follows. Let $L$ be the loss, $ \nabla L = |\hat{y} -y|^2 $, then $\nabla L$ can be written as follows:
+
 $$ 
 \begin{aligned}
 \nabla \hat{y} = \frac{\partial L}{\partial \hat{y}} = 2 \cdot |\hat{y} - y|
@@ -42,7 +43,9 @@ $$
 \nabla H_t = \frac{\partial L}{\partial y} \cdot \frac{\partial y}{\partial H_t}= \nabla y \cdot W_y 
 \end{aligned}
 $$
+
 From equation $(2)$, 
+
 $$
 
 \begin{aligned}
