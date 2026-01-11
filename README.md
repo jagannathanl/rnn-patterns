@@ -1,4 +1,3 @@
-# rnn-patterns - test
 # RNN Coding Patterns
 ## Math Behind RNNs:
 ![Figure 1](./rnn-flow-diagram.jpg)
@@ -71,3 +70,4 @@ $$
 $$
 
 ## Code Organization
+We implement two complementary patterns for building the RNN described above. The first approach (rnn_simple.py) constructs the RNN entirely from scratch, directly following the mathematical equations and manually computing forward and backward passes. The second approach (rnn_pt.py) uses PyTorch’s built‑in optimizers, loss functions, and autograd to implement the same model with a more idiomatic workflow. Both implementations follow the same overall structure and data flow so it’s easy to compare the two approaches side by side.
