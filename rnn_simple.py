@@ -1,4 +1,26 @@
 import torch
+import random
+import numpy as np
+
+def set_seed(seed: int = 42):
+    # Python RNG
+    random.seed(seed)
+
+    # NumPy RNG
+    np.random.seed(seed)
+
+    # PyTorch RNG (CPU)
+    torch.manual_seed(seed)
+
+    # PyTorch RNG (GPU)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed(seed)
+        torch.cuda.manual_seed_all(seed)
+
+    # Make PyTorch deterministic (optional but helps reproducibility)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+
 
 def generate_next_step_with_start(n, s, idim, odim):
     """
@@ -31,8 +53,8 @@ def forward_pass(X, Wx, Wh, Ba, Wy, By):
     s = X.shape[0]
     h = Wx.shape[1]
 
-    A = torch.rand(s, h)
-    Ht = torch.rand(s, h)
+    A = torch.zeros(s, h)
+    Ht = torch.zeros(s, h)
 
     odim = Wy.shape[1]
 
@@ -40,7 +62,7 @@ def forward_pass(X, Wx, Wh, Ba, Wy, By):
     # variable we don't keep all s tensors
     # we use A as (-xh)
 
-    y_pred = torch.rand(s, odim)
+    y_pred = torch.zeros(s, odim)
 
     H_prev = torch.zeros(h)
     for i in range(s):
@@ -76,10 +98,12 @@ def compute_output_gradient(Ht, Wy, By, y):
 
     return grad_Ht
     
-def backward_pass(Ht, grad_Ht, X, Wh, y_pred, y):
+def backward_pass(Ht, X, Wh, y_pred, y,  Wy, By):
     # Ht (s, h), grad_Ht (s, h)
-    s = grad_Ht.shape[0]
-    h = grad_Ht.shape[1]
+    s = X.shape[0]
+    h = Wh.shape[1]
+
+
     grad_Ht_prev = torch.zeros(h)
 
     grad_Wx = torch.zeros_like(Wx)
@@ -89,13 +113,7 @@ def backward_pass(Ht, grad_Ht, X, Wh, y_pred, y):
     grad_By = torch.zeros_like(By)
 
 
-    for i in range(s):
-        # grad_htotal (-, h)
-        grad_htotal = grad_Ht[i] + grad_Ht_prev
-    
-        # grad_A (_, h) grad_htotal (-, h), Ht[i] (-, h)
-        grad_A  = grad_htotal *(1 - Ht[i]**2)
-
+    for i in reversed(range(s)):
         # y_pred[i] is (-, o) and y[i] (_, o) 
         # grad_y = (-, o)
         grad_y = 2 * (y_pred[i] - y[i])
@@ -104,7 +122,13 @@ def backward_pass(Ht, grad_Ht, X, Wh, y_pred, y):
 
         # H[i] (-, h), grad_y (-, o)
         # grad_Wy (h, o)
-        grad_Wy = grad_Wy + Ht[i].unsqueeze(0).T @ grad_y.unsqueeze(0)
+        grad_Wy = grad_Wy + Ht[i].unsqueeze(1) @ grad_y.unsqueeze(0)
+
+        # grad_htotal (-, h)
+        grad_htotal = grad_y @ Wy.T + grad_Ht_prev
+    
+        # grad_A (_, h) grad_htotal (-, h), Ht[i] (-, h)
+        grad_A  = grad_htotal *(1 - Ht[i]**2)
 
         # X[i] (-, i) grad_A = (-, h)
         # grad_Wx (i, h)
@@ -113,32 +137,33 @@ def backward_pass(Ht, grad_Ht, X, Wh, y_pred, y):
         # grad_A (-, h), Ht[i] = (-, h)
         # grad_Wh (h, h)
        
-        grad_Wh = grad_Wh + grad_A.unsqueeze(0).T @ Ht[i].unsqueeze(0)
+        h_prev = Ht[i-1] if i > 0 else torch.zeros(h)
+        grad_Wh += grad_A.unsqueeze(0).T @ h_prev.unsqueeze(0)
 
         # grad_A (-, h)
         grad_Ba = grad_Ba + grad_A
 
         # grad_A (- x h) Wh ((h x h))= (1 x h)
-        grad_Ht_prev =  grad_A @ Wh
+        grad_Ht_prev =  grad_A @ Wh.T
     return grad_Wx, grad_Wh, grad_Ba, grad_Wy, grad_By
 
 
 def compute_error(y_pred, targets):
-    return torch.sum((y_pred - targets)**2)
+    return torch.mean((y_pred - targets)**2)
 
 
 
 if __name__ == "__main__":
     odim = 1
     idim = 1
-    h = 12 #hidden dimension
-    s = 20 #Sequence Length
+    h = 4 #hidden dimension
+    s = 5 #Sequence Length
 
     n_generated_samples = 200
     n = int(n_generated_samples*0.8)
 
 
-    X, y = generate_next_step_with_start(n, s, idim, odim)
+    X, y = generate_next_step_with_start(n_generated_samples, s, idim, odim)
 
     X_eval, y_eval = X[n:, :, :],  y[n:, :, :]
     X, y =  X[:n, :, :],  y[:n, :, :]
@@ -146,7 +171,6 @@ if __name__ == "__main__":
     Wx = torch.rand(idim, h)
     Wh = torch.rand(h, h)
     Ba = torch.rand(h)
-
 
     Wy = torch.rand(h, odim)
     By = torch.rand(odim)
@@ -158,10 +182,11 @@ if __name__ == "__main__":
     grad_By_total = torch.zeros_like(By)
 
     total_loss = 0.0
-    lr = 0.001
+    lr = 1e-4
 
+    n_epochs = 1
 
-    for i in range(n):
+    for i in range(n_epochs):
         X_i = X[i]
         y_i = y[i]
         #print(Ht.shape)
@@ -171,9 +196,7 @@ if __name__ == "__main__":
 
         total_loss += loss
 
-        grad_Ht = compute_output_gradient(Ht, Wy, By,  y_i)
-
-        grad_Wx, grad_Wh, grad_Ba, grad_Wy, grad_By = backward_pass(Ht, grad_Ht, X_i, Wh, y_pred, y_i)
+        grad_Wx, grad_Wh, grad_Ba, grad_Wy, grad_By = backward_pass(Ht, X_i, Wh, y_pred, y_i,  Wy, By)
 
         grad_Wx_total += grad_Wx
         grad_Wh_total += grad_Wh
@@ -181,18 +204,18 @@ if __name__ == "__main__":
         grad_Wy_total += grad_Wy
         grad_By_total += grad_By
     
-    Wx -= lr * grad_Wx_total
-    Wh -= lr * grad_Wh_total 
-    Ba -= lr * grad_Ba_total
-    Wy -= lr * grad_Wy_total
-    By -= lr * grad_By_total 
+    Wx -= lr * grad_Wx_total/n
+    Wh -= lr * grad_Wh_total/n
+    Ba -= lr * grad_Ba_total/n
+    Wy -= lr * grad_Wy_total/n
+    By -= lr * grad_By_total/n 
     
     print("Batch loss:", total_loss)
 
     #Eval
     total_eval_error = 0.0
     n_eval = n_generated_samples - n
-    for i in range((n_eval)):
+    for i in range(1):
         X_i = X[i]
         y_i = y[i]
         _, y_pred = forward_pass(X_i, Wx, Wh, Ba, Wy, By)
